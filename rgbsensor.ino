@@ -5,6 +5,7 @@
 #define TOUCH   14
 
 int CH, R, G, B, dir;
+bool buttonState, lastButtonState, touchState;
 
 void setup() {
   // put your setup code here, to run once:
@@ -16,11 +17,13 @@ void setup() {
   CH = ANODE_R;
   R = G = B = 0;
   dir = 1;
+  buttonState = lastButtonState = HIGH;
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
-  if (digitalRead(SWITCH) == LOW)
+  buttonState = digitalRead(SWITCH);
+  if (buttonState == LOW && lastButtonState == HIGH)
   {
     changeChannel();
   }
@@ -28,6 +31,7 @@ void loop() {
   {
     updateLED();
   }
+  lastButtonState = buttonState;
   delay(30);
 }
 
@@ -44,13 +48,12 @@ void changeChannel() {
   {
     CH = ANODE_R;
   }
-  dir = 1;  
+  dir = 1;
 }
 
 void updateLED() {
   if (CH == ANODE_R)
   {
-    R += dir;
     if (R >= 64)
     {
       dir = -1;
@@ -59,11 +62,11 @@ void updateLED() {
     {
       dir = 1;
     }
+    R += dir;
     analogWrite(CH, R);
   }
   else if (CH == ANODE_G)
   {
-    G += dir;
     if (G >= 64)
     {
       dir = -1;
@@ -72,11 +75,11 @@ void updateLED() {
     {
       dir = 1;
     }
+    G += dir;
     analogWrite(CH, G);
   }
   else
   {
-    B += dir;
     if (B >= 64)
     {
       dir = -1;
@@ -85,6 +88,7 @@ void updateLED() {
     {
       dir = 1;
     }
+    B += dir;
     analogWrite(CH, B);
   }
 }
